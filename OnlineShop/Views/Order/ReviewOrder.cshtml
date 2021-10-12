@@ -1,0 +1,187 @@
+﻿@model OnlineShop.Models.Order
+
+@{
+    ViewData["Title"] = "ReviewOrder";
+}
+
+
+<div>
+    <p>　</p>
+    <ul class="progressbar">
+        <li class="active">購物車</li>
+        <li class="active">訂單資料</li>
+        <li class="active">建立訂單</li>
+        <li>付款</li>
+    </ul>
+    <p>　</p>
+    <p>　</p>
+</div>
+
+<div class="text-center">
+    <p></p>
+    <h4>訂單建立成功</h4>
+    <p></p>
+</div>
+
+<div class="card shadow-sm rounded">
+    <div class="card-body">
+
+        <h5>訂單編號：@Html.DisplayFor(model => model.Id)</h5>
+        <div class="row">
+            <div class="col"><p class="text-muted">@Html.DisplayFor(model => model.UserName)</p></div>
+            <div class="col text-right"><p class="text-muted">@Html.DisplayFor(model => model.OrderDate)</p></div>
+        </div>
+        
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>商品名稱</th>
+                        <th>數量</th>
+                        <th>小計</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ViewBag.orderItems)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Amount</td>
+                            <td>@item.SubTotal</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-right pr-5">
+                <p style="padding-right:12px">總計： $@Html.DisplayFor(model => model.Total)</p>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-7">
+                <p>收貨人姓名：@Html.DisplayFor(model => model.ReceiverName)</p>
+                <p>收貨人電話：@Html.DisplayFor(model => model.ReceiverPhone)</p>
+                <p>收貨人地址：@Html.DisplayFor(model => model.ReceiverAdress)</p>
+            </div>
+            <div class="col-5">
+                <p>
+                    訂單狀態：
+                    @if (@Model.isPaid)
+                    {
+                        <span>已付款</span>
+                    }
+                    else
+                    {
+                        <span>未付款</span>
+                    }
+                </p>
+                <div class="row">
+                    <p class="col-3">立即付款：</p>
+                    <div class="col-9">
+                        <div class="w-75" id="payment-button"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<p></p>
+
+<script src="https://www.paypal.com/sdk/js?client-id=AROOEAjq-CEdjN74SU6zEGiQIc-1CKe_Cloaeuudb9ZCZZeAF3dVdqkeqO4fhFOM035egHsnUlK86pk1&currency=TWD"></script>
+<script>
+    paypal.Buttons({
+        style: {
+            shape: 'rect',
+            size: 'small',
+        },
+        createOrder: function (data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: @Model.Total,
+                        currency_code: 'TWD',
+                        breakdown: {
+                            item_total: { value: @Model.Total, currency_code: 'TWD' }
+                        }
+                    },
+                    items: [
+                        @foreach (var item in ViewBag.orderItems)
+                        {
+                            @:{ name:'@item.Product.Name', unit_amount: { value:'@item.SubTotal', currency_code: 'TWD' }, quantity:'@item.Amount' },
+                        }
+                    ]
+                }]
+            });
+        },
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (details) {
+                console.log(details),
+                window.location.replace("/order/payment/?Id=@Model.Id&isSuccess=true");
+            })
+        },
+        onCancel: function (data) {
+            window.location.replace("/order/payment/?Id=@Model.Id&isSussess=false");
+        }
+    }).render('#payment-button')
+</script>
+
+
+<style>
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+        .progressbar li {
+            list-style-type: none;
+            width: 25%;
+            float: left;
+            font-size: 12px;
+            position: relative;
+            text-align: center;
+            text-transform: uppercase;
+            color: #7d7d7d;
+        }
+
+            .progressbar li:before {
+                width: 30px;
+                height: 30px;
+                content: counter(step);
+                counter-increment: step;
+                line-height: 30px;
+                border: 2px solid #7d7d7d;
+                display: block;
+                text-align: center;
+                margin: 0 auto 10px auto;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            .progressbar li:after {
+                width: 100%;
+                height: 2px;
+                content: '';
+                position: absolute;
+                background-color: #7d7d7d;
+                top: 15px;
+                left: -50%;
+                z-index: -1;
+            }
+
+            .progressbar li:first-child:after {
+                content: none;
+            }
+
+            .progressbar li.active {
+                color: green;
+            }
+
+                .progressbar li.active:before {
+                    border-color: #55b776;
+                }
+
+                .progressbar li.active + li:after {
+                    background-color: #55b776;
+                }
+</style>

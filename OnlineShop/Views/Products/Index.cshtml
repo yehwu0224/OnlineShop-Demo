@@ -1,0 +1,74 @@
+﻿@model IEnumerable<DetailViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-3">
+        <p></p>
+        @await Component.InvokeAsync("CategoriesList")
+    </div>
+    <div class="col-9">
+        <img src="~/image/banner1.jpg" />
+    </div>
+</div>
+
+<div>共 @ViewBag.count 筆資料</div>
+<div class="row ml-1">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100 shadow-sm rounded" style="width: 16rem">
+                <img src="@Html.DisplayFor(modelItem => item.imgsrc)" class="card-img-top">
+                <div class="card-body">
+                    <h6 class="card-title">@Html.DisplayFor(modelItem => item.product.Name)</h6>
+
+                    <p class="card-text overflow-text" style="font-size:small">@Html.DisplayFor(modelItem => item.product.Description)</p>
+                </div>
+                <a class="stretched-link" asp-action="Details" asp-route-id="@item.product.Id"></a>
+                <div class="card-footer btn btn-light" style="position: relative;">
+                    <div class="text-center">
+                        @if (item.product.Stock > 1)
+                        {
+                            <a class="stretched-link text-dark" style="text-decoration: none;" onclick="ShowMessage()" 
+                               asp-controller="Cart" asp-action="AddtoCart" asp-route-Id="@item.product.Id">加入購物車</a>
+                        }
+                        else
+                        {
+                            <div class="text-muted">商品缺貨中</div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+
+<script>
+    function ShowMessage() {
+        toastr["success"]("商品已加入購物車！");
+    }
+</script>
+
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .col {
+        flex-grow: 0;
+        margin: 7px;
+        padding: 5px;
+    }
+
+    .overflow-text {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+    }
+</style>

@@ -1,0 +1,164 @@
+﻿@model OnlineShop.Models.Order
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div>
+    <p>　</p>
+    <ul class="progressbar">
+        <li class="active">購物車</li>
+        <li class="active">訂單資料</li>
+        <li>建立訂單</li>
+        <li>付款</li>
+    </ul>
+    <p>　</p>
+    <p>　</p>
+</div>
+
+<h4>訂單資料</h4>
+<hr />
+<form asp-action="CreateOrder">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">付款人資料</h5>
+                    <div class="form-group">
+                        <label asp-for="UserName" class="control-label">付款人ID</label>
+                        <input asp-for="UserId" readonly class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="UserName" class="control-label">付款人帳號</label>
+                        <input asp-for="UserName" readonly class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <p></p>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">收貨人資料</h5>
+                    <div class="row">
+                        <div class="form-group col">
+                            <label asp-for="ReceiverName" class="control-label">收貨人姓名</label>
+                            <input asp-for="ReceiverName" class="form-control" />
+                            <span asp-validation-for="ReceiverName" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="ReceiverPhone" class="control-label">收貨人電話</label>
+                            <input asp-for="ReceiverPhone" class="form-control" />
+                            <span asp-validation-for="ReceiverPhone" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ReceiverAdress" class="control-label">收貨人地址</label>
+                        <input asp-for="ReceiverAdress" class="form-control" />
+                        <span asp-validation-for="ReceiverAdress" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-4">
+            <div class="card" style="background-color: #f8f9fa">
+                <input type="hidden" asp-for="OrderItem" />
+                <div class="card-body">
+                    <h5 class="card-title">訂單內容</h5>
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <th>商品名稱</th>
+                                <th>小計</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.CartItems)
+                            {
+                                <tr>
+                                    <td>@item.Product.Name</td>
+                                    <td>@item.SubTotal</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <hr />
+                    <div class="text-right">
+                        <input type="hidden" asp-for="Total" />
+                        <p class="card-text font-weight-bolder" style="padding-right:12px">總計:　$ @Model.Total</p>
+                    </div>
+                    <p></p>
+                    <div class="text-center card-link">
+                        <button type="submit" class="btn btn-success w-75" >建立訂單</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<p></p>
+<button class="btn btn-sm btn-outline-secondary" asp-controller="Cart" asp-action="Index"><i class="fas fa-angle-left"></i> 返回購物車</button>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<style>
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+        .progressbar li {
+            list-style-type: none;
+            width: 25%;
+            float: left;
+            font-size: 12px;
+            position: relative;
+            text-align: center;
+            text-transform: uppercase;
+            color: #7d7d7d;
+        }
+
+            .progressbar li:before {
+                width: 30px;
+                height: 30px;
+                content: counter(step);
+                counter-increment: step;
+                line-height: 30px;
+                border: 2px solid #7d7d7d;
+                display: block;
+                text-align: center;
+                margin: 0 auto 10px auto;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            .progressbar li:after {
+                width: 100%;
+                height: 2px;
+                content: '';
+                position: absolute;
+                background-color: #7d7d7d;
+                top: 15px;
+                left: -50%;
+                z-index: -1;
+            }
+
+            .progressbar li:first-child:after {
+                content: none;
+            }
+
+            .progressbar li.active {
+                color: green;
+            }
+
+                .progressbar li.active:before {
+                    border-color: #55b776;
+                }
+
+                .progressbar li.active + li:after {
+                    background-color: #55b776;
+                }
+</style>

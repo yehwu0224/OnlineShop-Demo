@@ -1,0 +1,149 @@
+﻿@model IEnumerable<OnlineShop.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <p>　</p>
+    <ul class="progressbar">
+        <li class="active">購物車</li>
+        <li>訂單資料</li>
+        <li>建立訂單</li>
+        <li>付款</li>
+    </ul>
+    <p>　</p>
+    <p>　</p>
+</div>
+
+<div class="card shadow rounded">
+    <h5 class="card-header">購物車</h5>
+    <div class="card-body">
+        @if (Model != null)
+        {
+            <table class="table">
+                <thead class="table-borderless">
+                    <tr>
+                        <th></th>
+                        <th>商品名稱</th>
+                        <th>單價</th>
+                        <th>數量</th>
+                        <th>小計</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="text-center"><img src="@Html.DisplayFor(modelItem => item.imageSrc)" height="30" /></td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Product.Price)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SubTotal)
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-danger" asp-action="RemoveItem" asp-route-Id="@item.Product.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-center text-dark">購物車內尚無商品</p>
+        }
+        <hr />
+        <div class="row">
+            <div class="col-4 justify-content-around">
+                <div class="input-group input-group-sm mb-2">
+                    <span style="padding-top:3px">優惠碼：</span>
+                    <input type="text" class="form-control" placeholder="coupon" name="coupon">
+                </div>
+            </div>
+            <div class="col text-right pr-5"> <h5>總計： $@ViewBag.Total</h5></div>
+        </div>
+
+    </div>
+</div>
+<p>　</p>
+<div class="container">
+    <p class="row justify-content-end" style="margin-top:15px;">
+        <a class="btn btn-primary btn-sm text-white" style="padding-left:56px;padding-right:56px;margin-right:56px" asp-controller="Products" asp-action="Index">繼續購物</a>
+        <a class="btn btn-primary btn-sm text-white" style="padding-left:56px;padding-right:56px;" asp-controller="Order" asp-action="Checkout">前往結帳</a>
+    </p>
+</div>
+
+
+<style>
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+        .progressbar li {
+            list-style-type: none;
+            width: 25%;
+            float: left;
+            font-size: 12px;
+            position: relative;
+            text-align: center;
+            text-transform: uppercase;
+            color: #7d7d7d;
+        }
+
+            .progressbar li:before {
+                width: 30px;
+                height: 30px;
+                content: counter(step);
+                counter-increment: step;
+                line-height: 30px;
+                border: 2px solid #7d7d7d;
+                display: block;
+                text-align: center;
+                margin: 0 auto 10px auto;
+                border-radius: 50%;
+                background-color: white;
+            }
+
+            .progressbar li:after {
+                width: 100%;
+                height: 2px;
+                content: '';
+                position: absolute;
+                background-color: #7d7d7d;
+                top: 15px;
+                left: -50%;
+                z-index: -1;
+            }
+
+            .progressbar li:first-child:after {
+                content: none;
+            }
+
+            .progressbar li.active {
+                color: green;
+            }
+
+                .progressbar li.active:before {
+                    border-color: #55b776;
+                }
+
+                .progressbar li.active + li:after {
+                    background-color: #55b776;
+                }
+</style>
+
+
+
+
+

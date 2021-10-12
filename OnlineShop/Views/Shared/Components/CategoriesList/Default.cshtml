@@ -1,0 +1,15 @@
+﻿@model IEnumerable<OnlineShop.Models.Category>
+
+<div>
+    <div class="input-group mb-2">
+        <input type="text" class="form-control" placeholder="Name" name="SearchString">
+        <button class="btn btn-outline-secondary" type="submit" value="Search"><i class="fas fa-search"></i></button>
+    </div>
+</div>
+<div class="list-group">
+    <a class="list-group-item list-group-item-action" asp-action="Index">所有商品</a>
+    @foreach (var item in Model)
+    {
+        <a class="list-group-item list-group-item-action" asp-action="Index" asp-route-cId="@item.Id">@item.Name</a>
+    }
+</div>  
